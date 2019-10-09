@@ -42,38 +42,49 @@ namespace RichTextBlock.Control
             }
             else
             {
-                match = $"(?<={start}).*?(?={end})";
+               match = $"(?<={start}).*?(?={end})";
             }
             var r = new List<RuleText>();
-            if (Regex.IsMatch(text, match))
+            try
             {
-                var result = Regex.Matches(text, match);
-                foreach (Match rc in result)
+                if (Regex.IsMatch(text, match))
                 {
-                    var rt = new RuleText();
-                    rt.IsUnMatched = false;
-                    rt.OffsetWithMark = rc.Index - (BackStart == null ? 0 : BackStart.Length);
-                    rt.FontStyle = Rule.FontStyle;
-                    rt.FontSize = Rule.FontSize;
-                    rt.Foreground = Rule.Foreground;
-                    rt.Background = Rule.Background;
-                    rt.Value = rc.Value;
-                    var tempValue = rc.Value.TrimStart(SpaceChar);
-                    rt.Offset = rc.Index + rc.Value.Length - tempValue.Length;
-                    rt.Length = rc.Length;
-                    rt.LengthWithMark = rc.Index + rc.Length + (BackEnd == null ? 0 : BackEnd.Length);
-                    if (rc.Value != text)
+                    var result = Regex.Matches(text, match);
+                    foreach (Match rc in result)
                     {
-                        var rule = indentParser(rc.Value);
-                        if (rule.Any())
+                        var rt = new RuleText();
+                        rt.IsUnMatched = false;
+                        rt.OffsetWithMark = rc.Index - (BackStart == null ? 0 : BackStart.Length);
+                        rt.FontStyle = Rule.FontStyle;
+                        rt.FontSize = Rule.FontSize;
+                        rt.Foreground = Rule.Foreground;
+                        rt.Background = Rule.Background;
+                        rt.Value = rc.Value;
+                        var tempValue = rc.Value.TrimStart(SpaceChar);
+                        rt.Offset = rc.Index + rc.Value.Length - tempValue.Length;
+                        rt.Length = rc.Length;
+                        rt.LengthWithMark = rc.Index + rc.Length + (BackEnd == null ? 0 : BackEnd.Length);
+                        if (rc.Value != text)
                         {
-                            rt.Childs = rule;
+                            var rule = indentParser(rc.Value);
+                            if (rule.Any())
+                            {
+                                rt.Childs = rule;
+                            }
                         }
+
+                        r.Add(rt);
+                        text = text.Substring(0, rt.OffsetWithMark) +
+                               "".PadLeft(rt.LengthWithMark - rt.OffsetWithMark, SpaceChar) +
+                               text.Substring(rt.LengthWithMark, text.Length - rt.LengthWithMark);
                     }
-                    r.Add(rt);
-                    text = text.Substring(0, rt.OffsetWithMark) + "".PadLeft(rt.LengthWithMark - rt.OffsetWithMark, SpaceChar) + text.Substring(rt.LengthWithMark, text.Length - rt.LengthWithMark);
                 }
             }
+            catch
+            {
+
+            }
+          
 
             return r;
         }
