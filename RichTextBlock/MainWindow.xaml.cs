@@ -21,20 +21,11 @@ namespace RichTextBlock
             RichTextBlock.FontSize = 24;
             RichTextBlock.Text =
                 "<aaa>12123<a>测试</a>我大师邦</aaa>23123<a>12123</a>121(234)5555[456]666{778}<<>ccccc</<>$222/$!2/!@3/@%5/%^6/^&99/&*aa/*+abc/+";
+            
             RichTextBlock.Rules.Add(new RichTextRule
             {
                 Regex = @"\d",
                 Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0x00, 0xF0)),
-                FontSize = 24
-            });
-
-           
-
-            RichTextBlock.Rules.Add(new RichTextRule
-            {
-                Start = "<a>",
-                End = "</a>",
-                Foreground = Brushes.Blue,
                 FontSize = 24
             });
 
@@ -45,6 +36,16 @@ namespace RichTextBlock
                 Foreground = Brushes.Red,
                 FontSize = 24
             });
+
+            RichTextBlock.Rules.Add(new RichTextRule
+            {
+                Start = "<a>",
+                End = "</a>",
+                Foreground = Brushes.Blue,
+                FontSize = 24
+            });
+
+        
 
             RichTextBlock.Rules.Add(new RichTextRule
             {
