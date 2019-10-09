@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace RichTextBlock.Control
 {
     public class RichTextRuleParser : ITextRule
     {
-        private readonly RichTextRule Rule;
+        private RichTextRule Rule;
 
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
         public RichTextRuleParser(RichTextRule rule)
@@ -22,7 +23,9 @@ namespace RichTextBlock.Control
         private static readonly List<string> RegexInvalidateChar = new List<string>
             {@"\", "^", "$", "*", "+", "?", ".", "(", ")", "[", "]"};
 
-        public List<RuleText> ParserRule(string text)
+        internal static readonly char SpaceChar = (char)0x00;
+         
+        public List<RuleText> ParserRule(ref string text)
         {
             var start = Rule.Start;
             var end = Rule.End;
@@ -48,16 +51,18 @@ namespace RichTextBlock.Control
             foreach (Match rc in result)
             {
                 var rt = new RuleText();
-                rt.OffsetWithMark = rc.Index - (BackStart==null?0:BackStart.Length);
+                rt.OffsetWithMark = rc.Index - (BackStart == null ? 0 : BackStart.Length);
                 rt.FontStyle = Rule.FontStyle;
                 rt.FontSize = Rule.FontSize;
                 rt.Foreground = Rule.Foreground;
                 rt.Background = Rule.Background;
                 rt.Value = rc.Value;
-                rt.Offset = rc.Index;
+                var tempValue = rc.Value.TrimStart(SpaceChar);
+                rt.Offset = rc.Index + rc.Value.Length - tempValue.Length;
                 rt.Length = rc.Length;
                 rt.LengthWithMark = rc.Index + rc.Length + (BackEnd == null ? 0 : BackEnd.Length);
                 r.Add(rt);
+                text = text.Substring(0, rt.OffsetWithMark) + "".PadLeft(rt.LengthWithMark - rt.OffsetWithMark, SpaceChar) + text.Substring(rt.LengthWithMark, text.Length - rt.LengthWithMark);
             }
             return r;
         }

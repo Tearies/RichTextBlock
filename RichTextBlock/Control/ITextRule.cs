@@ -4,6 +4,6 @@ namespace RichTextBlock.Control
 {
     public interface ITextRule
     {
-        List<RuleText> ParserRule(string text);
+        List<RuleText> ParserRule(ref string text);
     }
 }

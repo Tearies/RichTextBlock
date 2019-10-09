@@ -11,10 +11,7 @@ namespace RichTextBlock.Control
 {
     public class RichTextBlock : FrameworkElement
     {
-        // Using a DependencyProperty as the backing store for Text.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TextProperty =
-            DependencyProperty.Register(nameof(Text), typeof(string), typeof(RichTextBlock),
-                new FrameworkPropertyMetadata(string.Empty, OnTextPropertyChangedCallBack));
+        public static readonly DependencyProperty TextProperty = DependencyProperty.Register(nameof(Text), typeof(string), typeof(RichTextBlock), new FrameworkPropertyMetadata(string.Empty, OnTextPropertyChangedCallBack));
         public static readonly DependencyProperty FontFamilyProperty = TextElement.FontFamilyProperty.AddOwner(typeof(RichTextBlock));
         public static readonly DependencyProperty FontStyleProperty = TextElement.FontStyleProperty.AddOwner(typeof(RichTextBlock));
         public static readonly DependencyProperty FontWeightProperty = TextElement.FontWeightProperty.AddOwner(typeof(RichTextBlock));
@@ -135,13 +132,13 @@ namespace RichTextBlock.Control
 
         public RichTextBlock()
         {
-            Rules = new ObservableCollection<RichTextRule>();
+            Rules = new RichTextRuleSource();
             Rules.CollectionChanged += Rules_CollectionChanged;
             formatter = new RichTextFormatter();
             formatter.FrameRecived += Formatter_FrameRecived;
         }
 
-        public ObservableCollection<RichTextRule> Rules { get; internal set; }
+        public RichTextRuleSource Rules { get; internal set; }
 
         public string Text
         {

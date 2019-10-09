@@ -4,8 +4,9 @@ using System.Windows.Media;
 namespace RichTextBlock.Control
 {
     public class RichTextRule
-    {
-        
+    { 
+        public int Order { get; set; }
+
         public string Start { get; set; }
 
         public string End { get; set; }

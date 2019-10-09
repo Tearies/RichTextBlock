@@ -71,6 +71,7 @@
     <Compile Include="Control\RichTextFormatter.cs" />
     <Compile Include="Control\RichTextRule.cs" />
     <Compile Include="Control\RichTextRuleParser.cs" />
+    <Compile Include="Control\RichTextRuleSource.cs" />
     <Compile Include="Control\RuleText.cs" />
     <Compile Include="Control\TextFormatCache.cs" />
     <Compile Include="MainWindow.xaml.cs">

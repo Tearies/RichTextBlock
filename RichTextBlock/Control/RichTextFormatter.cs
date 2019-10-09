@@ -50,11 +50,11 @@ namespace RichTextBlock.Control
             }
         }
 
-        private List<RuleText> ParseTextRule(RichTextBlock richTextBlock,IList<RichTextRule> rules, string text)
+        private List<RuleText> ParseTextRule(RichTextBlock richTextBlock, IList<RichTextRule> rules, string text)
         {
             var rulesText = new List<RuleText>();
             foreach (var richTextRule in rules)
-                rulesText.AddRange(new RichTextRuleParser(richTextRule).ParserRule(text));
+                rulesText.AddRange(new RichTextRuleParser(richTextRule).ParserRule(ref text));
             //匹配出来的字符串
             var tempRules = rulesText.OrderBy(o => o.Offset).ToList();
             //查找配有匹配出来的字符串
@@ -75,7 +75,6 @@ namespace RichTextBlock.Control
                     catch (Exception e)
                     {
                     }
-
                 indexoffset = tmrule.LengthWithMark;
             }
 
@@ -99,9 +98,11 @@ namespace RichTextBlock.Control
                     rule.Offset = last.LengthWithMark;
                     rule.Length = length;
                     rule.Value = text.Substring(last.LengthWithMark, length);
-                    tempRules.Add( rule);
+                    tempRules.Add(rule);
                 }
             }
+            tempRules.ForEach(o => o.Value = o.Value.Trim(RichTextRuleParser.SpaceChar));
+            tempRules.RemoveAll(o => string.IsNullOrEmpty(o.Value));
             return tempRules;
         }
 
@@ -110,7 +111,7 @@ namespace RichTextBlock.Control
             var offset = new Point(0, 0);
             foreach (var tempRule in tempRules)
             {
-                var formatText = richTextBlock.BuildFormattedText(tempRule.Value,tempRule);
+                var formatText = richTextBlock.BuildFormattedText(tempRule.Value, tempRule);
 
                 var ftext = formatText.Text;
                 if (offset.X + formatText.Width > richTextBlock.ActualWidth)
@@ -119,7 +120,7 @@ namespace RichTextBlock.Control
                     {
                         while (offset.X + formatText.Width > richTextBlock.ActualWidth)
                         {
-                            var eachWidths = formatText.GetCharWidths(richTextBlock,tempRule).ToArray();
+                            var eachWidths = formatText.GetCharWidths(richTextBlock, tempRule).ToArray();
                             double width = 0;
                             var needRemoveCount = eachWidths.Length;
                             do
@@ -138,7 +139,7 @@ namespace RichTextBlock.Control
                             ftext = ftext.Substring(needRemoveCount, ftext.Length - needRemoveCount);
                             if (string.IsNullOrEmpty(ftext))
                                 break;
-                            formatText = richTextBlock.BuildFormattedText(ftext,tempRule);
+                            formatText = richTextBlock.BuildFormattedText(ftext, tempRule);
                             offset.Offset(-offset.X, formatText.Height);
                         }
 
