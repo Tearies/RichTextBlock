@@ -63,7 +63,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Control\A.cs" />
     <Compile Include="Control\FormatFrameArgs.cs" />
     <Compile Include="Control\RichTextBlockExtension.cs" />
     <Compile Include="Control\ITextRule.cs" />

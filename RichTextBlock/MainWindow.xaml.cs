@@ -21,7 +21,7 @@ namespace RichTextBlock
             RichTextBlock.FontSize = 24;
             // RichTextBlock.Text =  "<aaa>12123<a>测<a>12</a>试</a>我大师邦</aaa>23123<a>12123</a>121(234)5555[456]666{778}<<>ccccc</<>$222/$!2/!@3/@%5/%^6/^&99/&*aa/*+abc/+";
 
-            RichTextBlock.Text = "<aaa>12123<a>测<a>12</a>试</a>我大师邦</aaa>";
+            RichTextBlock.Text = "<aaa>12123<a>测</a>12<a>试</a>我大师邦</aaa>";
 
             //RichTextBlock.Rules.Add(new RichTextRule
             //{
@@ -30,21 +30,21 @@ namespace RichTextBlock
             //    FontSize = 24
             //});
 
-            RichTextBlock.Rules.Add(new RichTextRule
-            {
-                Start = "<aaa>",
-                End = "</aaa>",
-                Foreground = Brushes.Red,
-                FontSize = 24
-            });
+            //RichTextBlock.Rules.Add(new RichTextRule
+            //{
+            //    Start = "<aaa>",
+            //    End = "</aaa>",
+            //    Foreground = Brushes.Red,
+            //    FontSize = 24
+            //});
 
-            RichTextBlock.Rules.Add(new RichTextRule
-            {
-                Start = "<a>",
-                End = "</a>",
-                Foreground = Brushes.Blue,
-                FontSize = 24
-            });
+            //RichTextBlock.Rules.Add(new RichTextRule
+            //{
+            //    Start = "<a>",
+            //    End = "</a>",
+            //    Foreground = Brushes.Blue,
+            //    FontSize = 24
+            //});
 
 
 
