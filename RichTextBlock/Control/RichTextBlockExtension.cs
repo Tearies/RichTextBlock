@@ -27,8 +27,11 @@ namespace RichTextBlock.Control
 
         public static RuleText ValidateDefaultRule(this RichTextBlock richTextBlock, RuleText currentRule)
         {
-            if(currentRule==null)
+            if (currentRule == null)
+            {
                 currentRule=new RuleText();
+                currentRule.IsUnMatched = true;
+            }
             if (!currentRule.FontStyleSet)
                 currentRule.FontStyle = richTextBlock.FontStyle;
             if(!currentRule.FontWeightSet)

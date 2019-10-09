@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace RichTextBlock.Control
 {
-    public class RichTextRuleParser : ITextRule
+    public class RichTextRuleParser
     {
         private RichTextRule Rule;
-
         /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
         public RichTextRuleParser(RichTextRule rule)
         {
@@ -24,8 +24,8 @@ namespace RichTextBlock.Control
             {@"\", "^", "$", "*", "+", "?", ".", "(", ")", "[", "]"};
 
         internal static readonly char SpaceChar = (char)0x00;
-         
-        public List<RuleText> ParserRule(ref string text)
+
+        public List<RuleText> ParserRule(ref string text, Func<string, List<RuleText>> indentParser)
         {
             var start = Rule.Start;
             var end = Rule.End;
@@ -44,29 +44,39 @@ namespace RichTextBlock.Control
             {
                 match = $"(?<={start}).*?(?={end})";
             }
-
-
-            var result = Regex.Matches(text, match);
             var r = new List<RuleText>();
-            foreach (Match rc in result)
+            if (Regex.IsMatch(text, match))
             {
-                var rt = new RuleText();
-                rt.OffsetWithMark = rc.Index - (BackStart == null ? 0 : BackStart.Length);
-                rt.FontStyle = Rule.FontStyle;
-                rt.FontSize = Rule.FontSize;
-                rt.Foreground = Rule.Foreground;
-                rt.Background = Rule.Background;
-                rt.Value = rc.Value;
-                var tempValue = rc.Value.TrimStart(SpaceChar);
-                rt.Offset = rc.Index + rc.Value.Length - tempValue.Length;
-                rt.Length = rc.Length;
-                rt.LengthWithMark = rc.Index + rc.Length + (BackEnd == null ? 0 : BackEnd.Length);
-                r.Add(rt);
-                text = text.Substring(0, rt.OffsetWithMark) + "".PadLeft(rt.LengthWithMark - rt.OffsetWithMark, SpaceChar) + text.Substring(rt.LengthWithMark, text.Length - rt.LengthWithMark);
+                var result = Regex.Matches(text, match);
+                foreach (Match rc in result)
+                {
+                    var rt = new RuleText();
+                    rt.IsUnMatched = false;
+                    rt.OffsetWithMark = rc.Index - (BackStart == null ? 0 : BackStart.Length);
+                    rt.FontStyle = Rule.FontStyle;
+                    rt.FontSize = Rule.FontSize;
+                    rt.Foreground = Rule.Foreground;
+                    rt.Background = Rule.Background;
+                    rt.Value = rc.Value;
+                    var tempValue = rc.Value.TrimStart(SpaceChar);
+                    rt.Offset = rc.Index + rc.Value.Length - tempValue.Length;
+                    rt.Length = rc.Length;
+                    rt.LengthWithMark = rc.Index + rc.Length + (BackEnd == null ? 0 : BackEnd.Length);
+                    if (rc.Value != text)
+                    {
+                        var rule = indentParser(rc.Value);
+                        if (rule.Any())
+                        {
+                            rt.Childs = rule;
+                        }
+                    }
+                    r.Add(rt);
+                    text = text.Substring(0, rt.OffsetWithMark) + "".PadLeft(rt.LengthWithMark - rt.OffsetWithMark, SpaceChar) + text.Substring(rt.LengthWithMark, text.Length - rt.LengthWithMark);
+                }
             }
+
             return r;
         }
-
         #endregion
     }
 }

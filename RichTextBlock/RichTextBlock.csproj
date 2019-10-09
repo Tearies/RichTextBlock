@@ -69,6 +69,7 @@
     <Compile Include="Control\ITextRule.cs" />
     <Compile Include="Control\RichTextBlock.cs" />
     <Compile Include="Control\RichTextFormatter.cs" />
+    <Compile Include="Control\RichTextFormatterImpl.cs" />
     <Compile Include="Control\RichTextRule.cs" />
     <Compile Include="Control\RichTextRuleParser.cs" />
     <Compile Include="Control\RichTextRuleSource.cs" />

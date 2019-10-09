@@ -12,13 +12,14 @@ namespace RichTextBlock.Control
 {
     public class RichTextFormatter
     {
-        /// <summary>Initializes a new instance of the <see cref="T:System.Object" /> class.</summary>
         public RichTextFormatter()
         {
+            FormatterImpl = new RichTextFormatterImpl();
             FormatCache = new ObservableCollection<TextFormatCache>();
             FormatCache.CollectionChanged += FormatCache_CollectionChanged;
         }
 
+        private RichTextFormatterImpl FormatterImpl { get; }
         public ObservableCollection<TextFormatCache> FormatCache { get; }
 
         private void FormatCache_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -37,7 +38,8 @@ namespace RichTextBlock.Control
             if (richTextBlock.Rules.Any())
             {
                 FormatCache.Clear();
-                BuildFormatText(richTextBlock, ParseTextRule(richTextBlock, richTextBlock.Rules, text));
+                FormatterImpl.SetUpRichTextHost(richTextBlock);
+                BuildFormatText(richTextBlock, FormatterImpl.Format());
             }
             else
             {
@@ -46,69 +48,12 @@ namespace RichTextBlock.Control
             }
         }
 
-        private List<RuleText> ParseTextRule(RichTextBlock richTextBlock, IList<RichTextRule> rules, string text)
-        {
-            var rulesText = new List<RuleText>();
-            foreach (var richTextRule in rules)
-                rulesText.AddRange(new RichTextRuleParser(richTextRule).ParserRule(ref text));
-            //匹配出来的字符串
-            var tempRules = rulesText.OrderBy(o => o.Offset).ToList();
-            //查找配有匹配出来的字符串
-            var indexoffset = 0;
-            var missdRules = new List<RuleText>();
-            foreach (var tmrule in tempRules)
-            {
-                if (tmrule.OffsetWithMark > indexoffset)
-                    try
-                    {
-                        var length = tmrule.OffsetWithMark - indexoffset;
-                        var rule = richTextBlock.BuildDefaultRule();
-                        rule.Offset = indexoffset;
-                        rule.Length = length;
-                        rule.Value = text.Substring(indexoffset, length);
-                        missdRules.Add(rule);
-                    }
-                    catch (Exception e)
-                    {
-                    }
-                indexoffset = tmrule.LengthWithMark;
-            }
-
-            tempRules.AddRange(missdRules);
-            tempRules = tempRules.OrderBy(o => o.Offset).ToList();
-            var last = tempRules.LastOrDefault();
-            if (last == null)
-            {
-                var rule = richTextBlock.BuildDefaultRule();
-                rule.Offset = indexoffset;
-                rule.Length = text.Length;
-                rule.Value = text;
-                tempRules.Add(rule);
-            }
-            else
-            {
-                if (last.LengthWithMark < text.Length)
-                {
-                    var length = text.Length - last.LengthWithMark;
-                    var rule = richTextBlock.BuildDefaultRule();
-                    rule.Offset = last.LengthWithMark;
-                    rule.Length = length;
-                    rule.Value = text.Substring(last.LengthWithMark, length);
-                    tempRules.Add(rule);
-                }
-            }
-            tempRules.ForEach(o => o.Value = o.Value.Trim(RichTextRuleParser.SpaceChar));
-            tempRules.RemoveAll(o => string.IsNullOrEmpty(o.Value));
-            return tempRules;
-        }
-
         private void BuildFormatText(RichTextBlock richTextBlock, List<RuleText> tempRules)
         {
             var offset = new Point(0, 0);
             foreach (var tempRule in tempRules)
             {
                 var formatText = richTextBlock.BuildFormattedText(tempRule.Value, tempRule);
-
                 var ftext = formatText.Text;
                 if (offset.X + formatText.Width > richTextBlock.ActualWidth)
                 {
