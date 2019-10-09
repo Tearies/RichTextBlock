@@ -41,11 +41,7 @@ namespace RichTextBlock.Control
             }
             else
             {
-                var formatText = new FormattedText(richTextBlock.Text, CultureInfo.CurrentUICulture,
-                    richTextBlock.FlowDirection,
-                      new Typeface(richTextBlock.FontFamily, richTextBlock.FontStyle,
-                          richTextBlock.FontWeight, richTextBlock.FontStretch),
-                    richTextBlock.FontSize, Brushes.Black);
+                var formatText = richTextBlock.BuildFormattedText(text);
                 FormatCache.Add(new TextFormatCache(formatText, new Point()));
             }
         }
