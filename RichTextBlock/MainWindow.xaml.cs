@@ -23,20 +23,20 @@ namespace RichTextBlock
 
             RichTextBlock.Text = "<aaa>12123<a>测</a>12<a>试</a>我大师邦</aaa>";
 
-            //RichTextBlock.Rules.Add(new RichTextRule
-            //{
-            //    Regex = @"\d",
-            //    Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0x00, 0xF0)),
-            //    FontSize = 24
-            //});
+            RichTextBlock.Rules.Add(new RichTextRule
+            {
+                Regex = @"\d",
+                Foreground = new SolidColorBrush(Color.FromArgb(0xFF, 0xFF, 0x00, 0xF0)),
+                FontSize = 24
+            });
 
-            //RichTextBlock.Rules.Add(new RichTextRule
-            //{
-            //    Start = "<aaa>",
-            //    End = "</aaa>",
-            //    Foreground = Brushes.Red,
-            //    FontSize = 24
-            //});
+            RichTextBlock.Rules.Add(new RichTextRule
+            {
+                Start = "<aaa>",
+                End = "</aaa>",
+                Foreground = Brushes.Red,
+                FontSize = 24
+            });
 
             //RichTextBlock.Rules.Add(new RichTextRule
             //{
